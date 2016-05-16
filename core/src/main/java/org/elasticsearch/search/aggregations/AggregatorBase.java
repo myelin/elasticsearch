@@ -43,9 +43,11 @@ public abstract class AggregatorBase extends Aggregator {
     private final Map<String, Object> metaData;
 
     protected final Aggregator[] subAggregators;
+    protected final PipelineAggregator[] subpipelineAggregator;
     protected BucketCollector collectableSubAggregators;
 
     private Map<String, Aggregator> subAggregatorbyName;
+    private Map<String, PipelineAggregator> subPipelineAggregatorbyName;
     private DeferringBucketCollector recordingWrapper;
     private final List<PipelineAggregator> pipelineAggregators;
 
@@ -66,7 +68,9 @@ public abstract class AggregatorBase extends Aggregator {
         this.parent = parent;
         this.context = context;
         assert factories != null : "sub-factories provided to BucketAggregator must not be null, use AggragatorFactories.EMPTY instead";
-        this.subAggregators = factories.createSubAggregators(this);
+        this.subAggregators = factories.createSubAggregators(this);   
+        this.subpipelineAggregator = factories.createSubPipelineAggregators(this);
+        
         context.searchContext().addReleasable(this, Lifetime.PHASE);
         // Register a safeguard to highlight any invalid construction logic (call to this constructor without subsequent preCollection call)
         collectableSubAggregators = new BucketCollector() {
@@ -213,6 +217,22 @@ public abstract class AggregatorBase extends Aggregator {
         return subAggregators;
     }
 
+    public PipelineAggregator[] subPipelineAggregator() {
+        return subpipelineAggregator;
+    }
+    
+    @Override
+    public PipelineAggregator subPipelineAggregator(String aggName) {
+        if (subPipelineAggregatorbyName == null) {
+            subPipelineAggregatorbyName = new HashMap<>(pipelineAggregators.size());
+            
+            for (int i=0; i < pipelineAggregators.size(); i++ ) {
+                subPipelineAggregatorbyName.put(pipelineAggregators.get(i).name(), pipelineAggregators.get(i));
+            }
+        }
+        return subPipelineAggregatorbyName.get(aggName);
+    }
+    
     @Override
     public Aggregator subAggregator(String aggName) {
         if (subAggregatorbyName == null) {

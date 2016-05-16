@@ -32,6 +32,8 @@ public final class Elasticsearch {
      */
     public static void main(String[] args) throws StartupError {
         try {
+            args = new String[1];
+            args[0] = "start";
             Bootstrap.init(args);
         } catch (Throwable t) {
             // format exceptions to the console in a special way

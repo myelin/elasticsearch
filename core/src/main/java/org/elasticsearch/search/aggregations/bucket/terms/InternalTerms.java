@@ -171,7 +171,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         Multimap<Object, InternalTerms.Bucket> buckets = ArrayListMultimap.create();
         long sumDocCountError = 0;
         long otherDocCount = 0;
-        InternalTerms<A, B> referenceTerms = null;
+          InternalTerms<A, B> referenceTerms = null;
         for (InternalAggregation aggregation : aggregations) {
             InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregation;
             if (referenceTerms == null && !terms.getClass().equals(UnmappedTerms.class)) {
@@ -215,9 +215,13 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
 
         final int size = Math.min(requiredSize, buckets.size());
         BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
+        
+        List<PipelineAggregator> pipeAgg = this.pipelineAggregators();
+        
         for (Collection<Bucket> l : buckets.asMap().values()) {
             List<Bucket> sameTermBuckets = (List<Bucket>) l; // cast is ok according to javadocs
             final Bucket b = sameTermBuckets.get(0).reduce(sameTermBuckets, reduceContext);
+
             if (b.docCountError != -1) {
                 if (sumDocCountError == -1) {
                     b.docCountError = -1;
@@ -226,10 +230,24 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
                 }
             }
             if (b.docCount >= minDocCount) {
-                Terms.Bucket removed = ordered.insertWithOverflow(b);
-                if (removed != null) {
-                    otherDocCount += removed.getDocCount();
+               // try {
+                if (pipeAgg != null) {
+                    Terms.Bucket removed = ordered.add(b);
+                    if (removed != null) {
+                        otherDocCount += removed.getDocCount();
+                    }
                 }
+                else {
+                    Terms.Bucket removed = ordered.insertWithOverflow(b);
+                    if (removed != null) {
+                        otherDocCount += removed.getDocCount();
+                    }
+                }
+                //}
+/*                catch (Exception e) {
+                    
+                }*/
+
             }
         }
         Bucket[] list = new Bucket[ordered.size()];

@@ -92,19 +92,21 @@ public class Environment {
         fileStores = allStores.toArray(new ESFileStore[allStores.size()]);
     }
 
-    public Environment(Settings settings) {
+    public Environment(Settings settings) {        
         this.settings = settings;
         final Path homeFile;
         if (settings.get("path.home") != null) {
             homeFile = PathUtils.get(cleanPath(settings.get("path.home")));
-        } else {
-            throw new IllegalStateException("path.home is not configured");
+        } else {        
+            homeFile = PathUtils.get("/Users/brijeshs/Documents/elasticsearch_sort_netbeans/elasticsearch/core/");
+            //throw new IllegalStateException("path.home is not configured");
         }
 
         if (settings.get("path.conf") != null) {
             configFile = PathUtils.get(cleanPath(settings.get("path.conf")));
-        } else {
+        } else {            
             configFile = homeFile.resolve("config");
+           // configFile = PathUtils.get("/Users/brijeshs/Documents/elasticsearch_sort_netbeans/elasticsearch/core/config/elasticsearch.yml");
         }
 
         if (settings.get("path.scripts") != null) {
@@ -159,7 +161,8 @@ public class Environment {
 
         binFile = homeFile.resolve("bin");
         libFile = homeFile.resolve("lib");
-        modulesFile = homeFile.resolve("modules");
+        //modulesFile = homeFile.resolve("modules");
+        modulesFile = PathUtils.get("/Users/brijeshs/Documents/elasticsearch_sort_netbeans/elasticsearch/core/modules/");
     }
 
     /**

@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 
 /**
  *
@@ -174,6 +175,7 @@ class InternalOrder extends Terms.Order {
 
             AggregationPath path = path();
             final Aggregator aggregator = path.resolveAggregator(termsAggregator);
+            final PipelineAggregator pipelineAggregator = path.resolvePipelineAggregator(termsAggregator);
             final String key = path.lastPathElement().key;
 
             if (aggregator instanceof SingleBucketAggregator) {
@@ -203,6 +205,18 @@ class InternalOrder extends Terms.Order {
                         // the bottom
                         return Comparators.compareDiscardNaN(v1, v2, asc);
                     }
+                };
+            }
+            
+            if (pipelineAggregator instanceof PipelineAggregator) {
+                assert key != null : "this should be done for pipeline aggregator";
+               return new Comparator<Terms.Bucket>() {
+                    @Override
+                    public int compare(Terms.Bucket o1, Terms.Bucket o2) {
+                        double v1 = ((InternalTerms.Bucket) o1).bucketOrd;
+                        double v2 = ((InternalTerms.Bucket) o2).bucketOrd;
+                        return Comparators.compareDiscardNaN(v1, v2, asc);
+                    }                    
                 };
             }
 

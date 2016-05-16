@@ -30,6 +30,8 @@ import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.internal.SearchContext.Lifetime;
 import org.elasticsearch.transport.TransportRequest;
 
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -154,6 +156,11 @@ public abstract class AggregatorFactory {
 
             @Override
             public Aggregator subAggregator(String name) {
+                throw new UnsupportedOperationException();
+            }
+            
+            @Override
+            public PipelineAggregator subPipelineAggregator (String name) {
                 throw new UnsupportedOperationException();
             }
 
