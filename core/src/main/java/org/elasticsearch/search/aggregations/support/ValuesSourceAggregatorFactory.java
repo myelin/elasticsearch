@@ -61,7 +61,7 @@ public abstract class ValuesSourceAggregatorFactory<VS extends ValuesSource> ext
         if (vs == null) {
             return createUnmapped(context, parent, pipelineAggregators, metaData);
         }
-        return doCreateInternal(vs, context, parent, collectsFromSingleBucket, pipelineAggregators, metaData);
+            return doCreateInternal(vs, context, parent, collectsFromSingleBucket, pipelineAggregators, metaData);
     }
 
     @Override

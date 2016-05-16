@@ -28,6 +28,8 @@ import org.elasticsearch.search.aggregations.bucket.BucketsAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.internal.SearchContext;
 
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
+
 import java.io.IOException;
 
 /**
@@ -96,6 +98,12 @@ public abstract class Aggregator extends BucketCollector implements Releasable {
      */
     public abstract Aggregator subAggregator(String name);
 
+    /**
+     * Return the pipeline aggregator with the provided name.
+     */
+    public abstract PipelineAggregator subPipelineAggregator (String name);
+    
+    
     /**
      * Build an aggregation for data that has been collected into {@code bucket}.
      */

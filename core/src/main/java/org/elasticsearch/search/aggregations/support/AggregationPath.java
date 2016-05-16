@@ -28,6 +28,9 @@ import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregation;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregator;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorFactory;
+import org.elasticsearch.search.aggregations.pipeline.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,12 +203,12 @@ public class AggregationPath {
         for (int i = 0; i < pathElements.size(); i++) {
             AggregationPath.PathElement token = pathElements.get(i);
             Aggregation agg = parent.getAggregations().get(token.name);
-
+            /*
             if (agg == null) {
                 throw new IllegalArgumentException("Invalid order path [" + this +
                         "]. Cannot find aggregation named [" + token.name + "]");
             }
-
+            */
             if (agg instanceof SingleBucketAggregation) {
                 if (token.key != null && !token.key.equals("doc_count")) {
                     throw new IllegalArgumentException("Invalid order path [" + this +
@@ -263,6 +266,17 @@ public class AggregationPath {
         }
         return aggregator;
     }
+    
+    public PipelineAggregator resolvePipelineAggregator(Aggregator root) {
+        Aggregator aggregator = root;
+        PipelineAggregator pipelineAggregator = null;
+        for (int i = 0; i < pathElements.size(); i++) {
+            AggregationPath.PathElement token = pathElements.get(i);
+            
+            pipelineAggregator = aggregator.subPipelineAggregator(token.name);
+        }
+        return pipelineAggregator;
+    }
 
     /**
      * Resolves the topmost aggregator pointed by this path using the given root as a point of reference.
@@ -273,8 +287,10 @@ public class AggregationPath {
     public Aggregator resolveTopmostAggregator(Aggregator root) {
         AggregationPath.PathElement token = pathElements.get(0);
         Aggregator aggregator = root.subAggregator(token.name);
+        PipelineAggregator pipelineAggregator = root.subPipelineAggregator(token.name);
+       
         assert (aggregator instanceof SingleBucketAggregator )
-                || (aggregator instanceof NumericMetricsAggregator) : "this should be picked up before aggregation execution - on validate";
+                || (aggregator instanceof NumericMetricsAggregator) || (pipelineAggregator instanceof PipelineAggregator) : "this should be picked up before aggregation execution - on validate";
         return aggregator;
     }
 
@@ -283,13 +299,17 @@ public class AggregationPath {
      *
      * @param root  The point of reference of this path
      */
-    public void validate(Aggregator root) {
+    public void validate(Aggregator root) {        
+        PipelineAggregator pipelineAggregator = null; 
         Aggregator aggregator = root;
         for (int i = 0; i < pathElements.size(); i++) {
             aggregator = aggregator.subAggregator(pathElements.get(i).name);
+            pipelineAggregator = root.subPipelineAggregator(pathElements.get(0).name);       
             if (aggregator == null) {
-                throw new AggregationExecutionException("Invalid term-aggregator order path [" + this + "]. Unknown aggregation ["
-                        + pathElements.get(i).name + "]");
+                if (pipelineAggregator == null) {
+                    throw new AggregationExecutionException("Invalid term-aggregator order path [" + this + "]. Unknown aggregation ["
+                            + pathElements.get(i).name + "]");
+                }
             }
             if (i < pathElements.size() - 1) {
 
@@ -313,7 +333,7 @@ public class AggregationPath {
             }
         }
         boolean singleBucket = aggregator instanceof SingleBucketAggregator;
-        if (!singleBucket && !(aggregator instanceof NumericMetricsAggregator)) {
+        if ((!singleBucket && !(aggregator instanceof NumericMetricsAggregator)) && ( pipelineAggregator == null)) {
             throw new AggregationExecutionException("Invalid terms aggregation order path [" + this +
                     "]. Terms buckets can only be sorted on a sub-aggregator path " +
                     "that is built out of zero or more single-bucket aggregations within the path and a final " +
@@ -340,6 +360,10 @@ public class AggregationPath {
             return;   // perfectly valid to sort on single metric aggregation (will be sorted on its associated value)
         }
 
+        if (pipelineAggregator instanceof PipelineAggregator) {
+            return;
+        }
+
         // the aggregator must be of a multi-value metrics type
         if (lastToken.key == null) {
             throw new AggregationExecutionException("Invalid terms aggregation order path [" + this +
@@ -350,6 +374,8 @@ public class AggregationPath {
             throw new AggregationExecutionException("Invalid terms aggregation order path [" + this +
                     "]. Unknown metric name [" + lastToken.key + "] on multi-value metrics aggregation [" + lastToken.name + "]");
         }
+        
+       return;
     }
 
     private static String[] split(String toSplit, int index, String[] result) {

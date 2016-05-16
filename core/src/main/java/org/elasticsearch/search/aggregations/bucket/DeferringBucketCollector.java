@@ -27,6 +27,8 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
+
 import java.io.IOException;
 
 /**
@@ -97,6 +99,10 @@ public abstract class DeferringBucketCollector extends BucketCollector {
             return in.subAggregator(name);
         }
 
+        public PipelineAggregator subPipelineAggregator(String name){
+            return in.subPipelineAggregator(name);
+        }
+        
         @Override
         public InternalAggregation buildAggregation(long bucket) throws IOException {
             return in.buildAggregation(bucket);
