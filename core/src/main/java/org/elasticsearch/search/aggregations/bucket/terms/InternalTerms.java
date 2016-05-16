@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 
 /**
  *
@@ -57,6 +58,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         protected InternalAggregations aggregations;
         protected boolean showDocCountError;
         transient final ValueFormatter formatter;
+        protected List<PipelineAggregator> pipelineAggregations;
 
         protected Bucket(ValueFormatter formatter, boolean showDocCountError) {
             // for serialization
@@ -83,6 +85,11 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
                 throw new IllegalStateException("show_terms_doc_count_error is false");
             }
             return docCountError;
+        }
+        
+        
+        public List<PipelineAggregator> getPipelineAggregations() {
+            return pipelineAggregations;
         }
 
         @Override
@@ -164,14 +171,49 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
     public long getSumOfOtherDocCounts() {
         return otherDocCount;
     }
+   
+    public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
+        
+        InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket> originalAgg = (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregations;
+        //List<? extends Bucket> bucketsOriginaAgg = originalAgg.getBuckets();
+        
+        InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregations;        
+        Map<Object, List<InternalTerms.Bucket>> buckets = new HashMap<>();
+        for (Bucket bucket : terms.buckets) {                
+            List<Bucket> bucketList = buckets.get(bucket.getKey());
+            if (bucketList == null) {
+                bucketList = new ArrayList<>();
+                buckets.put(bucket.getKey(), bucketList);
+            }
+            bucketList.add(bucket);
+        }
 
+        final int size = Math.min(requiredSize, originalAgg.getBuckets().size());
+        BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
+        
+        for (List<Bucket> sameTermBuckets : buckets.values()) {
+            final Bucket b = sameTermBuckets.get(0);
+            Terms.Bucket removed = ordered.insertWithOverflow(b);
+        }
+
+        Bucket[] list = new Bucket[ordered.size()];
+        for (int i = ordered.size() - 1; i >= 0; i--) {
+            list[i] = (Bucket) ordered.pop();
+        }
+        
+        return create(name, Arrays.asList(list), docCountError, otherDocCount, this);
+        //return aggregations;
+    }
+    
+    
+    
     @Override
     public InternalAggregation doReduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
 
         Multimap<Object, InternalTerms.Bucket> buckets = ArrayListMultimap.create();
         long sumDocCountError = 0;
         long otherDocCount = 0;
-          InternalTerms<A, B> referenceTerms = null;
+        InternalTerms<A, B> referenceTerms = null;
         for (InternalAggregation aggregation : aggregations) {
             InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregation;
             if (referenceTerms == null && !terms.getClass().equals(UnmappedTerms.class)) {
@@ -217,11 +259,14 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
         
         List<PipelineAggregator> pipeAgg = this.pipelineAggregators();
+        int counter = 0;
         
         for (Collection<Bucket> l : buckets.asMap().values()) {
             List<Bucket> sameTermBuckets = (List<Bucket>) l; // cast is ok according to javadocs
             final Bucket b = sameTermBuckets.get(0).reduce(sameTermBuckets, reduceContext);
 
+            counter++;
+            b.pipelineAggregations = pipeAgg;
             if (b.docCountError != -1) {
                 if (sumDocCountError == -1) {
                     b.docCountError = -1;
@@ -232,7 +277,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
             if (b.docCount >= minDocCount) {
                // try {
                 if (pipeAgg != null) {
-                    Terms.Bucket removed = ordered.add(b);
+                    Terms.Bucket removed = ordered.insertWithOverflow(b);
                     if (removed != null) {
                         otherDocCount += removed.getDocCount();
                     }

@@ -81,6 +81,11 @@ public class InternalGeoHashGrid extends InternalMultiBucketAggregation<Internal
         BucketStreams.registerStream(BUCKET_STREAM, TYPE.stream());
     }
 
+    @Override
+    public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
     static class Bucket extends InternalMultiBucketAggregation.InternalBucket implements GeoHashGrid.Bucket, Comparable<Bucket> {
 
@@ -162,6 +167,11 @@ public class InternalGeoHashGrid extends InternalMultiBucketAggregation<Internal
             aggregations.toXContentInternal(builder, params);
             builder.endObject();
             return builder;
+        }
+
+        @Override
+        public List<PipelineAggregator> getPipeplineAggregation() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
     private int requiredSize;
