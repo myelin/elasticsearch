@@ -136,8 +136,12 @@ public class InternalPercentilesBucket extends InternalNumericMetricsAggregation
         return builder;
     }
 
-    public static class Iter extends UnmodifiableIterator<Percentile> {
+    @Override
+    public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    public static class Iter extends UnmodifiableIterator<Percentile> {
         private final double[] percents;
         private final double[] percentiles;
         private int i;
