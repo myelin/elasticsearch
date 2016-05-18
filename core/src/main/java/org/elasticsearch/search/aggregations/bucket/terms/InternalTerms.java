@@ -33,11 +33,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.support.BucketPriority
 import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.format.ValueFormatter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 
 /**
@@ -86,8 +83,8 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
             }
             return docCountError;
         }
-        
-        
+
+
         public List<PipelineAggregator> getPipelineAggregations() {
             return pipelineAggregations;
         }
@@ -171,15 +168,15 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
     public long getSumOfOtherDocCounts() {
         return otherDocCount;
     }
-   
+
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
-        
+
         InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket> originalAgg = (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregations;
         //List<? extends Bucket> bucketsOriginaAgg = originalAgg.getBuckets();
-        
-        InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregations;        
+
+        InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregations;
         Map<Object, List<InternalTerms.Bucket>> buckets = new HashMap<>();
-        for (Bucket bucket : terms.buckets) {                
+        for (Bucket bucket : terms.buckets) {
             List<Bucket> bucketList = buckets.get(bucket.getKey());
             if (bucketList == null) {
                 bucketList = new ArrayList<>();
@@ -190,7 +187,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
 
         final int size = Math.min(requiredSize, originalAgg.getBuckets().size());
         BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
-        
+
         for (List<Bucket> sameTermBuckets : buckets.values()) {
             final Bucket b = sameTermBuckets.get(0);
             Terms.Bucket removed = ordered.insertWithOverflow(b);
@@ -200,13 +197,13 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         for (int i = ordered.size() - 1; i >= 0; i--) {
             list[i] = (Bucket) ordered.pop();
         }
-        
+
         return create(name, Arrays.asList(list), docCountError, otherDocCount, this);
         //return aggregations;
     }
-    
-    
-    
+
+
+
     @Override
     public InternalAggregation doReduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
 
@@ -257,10 +254,10 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
 
         final int size = Math.min(requiredSize, buckets.size());
         BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
-        
+
         List<PipelineAggregator> pipeAgg = this.pipelineAggregators();
         int counter = 0;
-        
+
         for (Collection<Bucket> l : buckets.asMap().values()) {
             List<Bucket> sameTermBuckets = (List<Bucket>) l; // cast is ok according to javadocs
             final Bucket b = sameTermBuckets.get(0).reduce(sameTermBuckets, reduceContext);
@@ -290,7 +287,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
                 }
                 //}
 /*                catch (Exception e) {
-                    
+
                 }*/
 
             }

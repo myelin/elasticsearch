@@ -85,15 +85,15 @@ public class PathTests extends ESTestCase {
         private List<AggregationPath.PathElement> tokens = new ArrayList<>();
 
         Tokens add(String name) {
-            tokens.add(new AggregationPath.PathElement(name, name, null));
+            tokens.add(new AggregationPath.PathElement(name, name, null, null));
             return this;
         }
 
         Tokens add(String name, String key) {
             if (Math.random() > 0.5) {
-                tokens.add(new AggregationPath.PathElement(name + "." + key, name, key));
+                tokens.add(new AggregationPath.PathElement(name + "." + key, name, key, null));
             } else {
-                tokens.add(new AggregationPath.PathElement(name + "[" + key + "]", name, key));
+                tokens.add(new AggregationPath.PathElement(name + "[" + key + "]", name, key, null));
             }
             return this;
         }
