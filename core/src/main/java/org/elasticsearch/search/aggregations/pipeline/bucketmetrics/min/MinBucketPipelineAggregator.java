@@ -93,12 +93,13 @@ public class MinBucketPipelineAggregator extends BucketMetricsPipelineAggregator
         String[] keys = minBucketKeys.toArray(new String[minBucketKeys.size()]);
         return new InternalBucketMetricValue(name(), keys, minValue, formatter, Collections.EMPTY_LIST, metaData());
     };
-
+    /*
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, InternalAggregation.ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+*/
     public static class Factory extends PipelineAggregatorFactory {
 
         private final ValueFormatter formatter;

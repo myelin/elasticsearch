@@ -107,12 +107,12 @@ public class ExtendedStatsBucketPipelineAggregator extends BucketMetricsPipeline
     protected InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata) {
         return new InternalExtendedStatsBucket(name(), count, sum, min, max, sumOfSqrs, sigma, formatter, pipelineAggregators, metadata);
     }
-
+/*
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, InternalAggregation.ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    }*/
+    
     public static class Factory extends PipelineAggregatorFactory {
 
         private final ValueFormatter formatter;

@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.elasticsearch.search.aggregations.InternalAggregation;
-
 /**
  *
  */
@@ -66,7 +65,7 @@ public class InternalNested extends InternalSingleBucketAggregation implements N
     protected InternalSingleBucketAggregation newAggregation(String name, long docCount, InternalAggregations subAggregations) {
         return new InternalNested(name, docCount, subAggregations, pipelineAggregators(), getMetaData());
     }
-
+    
     @Override
     public List<PipelineAggregator> getPipeplineAggregation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

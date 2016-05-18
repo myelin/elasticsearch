@@ -49,14 +49,14 @@ import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
 public class InternalAggregations implements Aggregations, ToXContent, Streamable {
 
     public final static InternalAggregations EMPTY = new InternalAggregations();
+    public List<InternalAggregation> aggregations = Collections.emptyList();
+
     private static final Function<InternalAggregation, Aggregation> SUPERTYPE_CAST = new Function<InternalAggregation, Aggregation>() {
         @Override
         public Aggregation apply(InternalAggregation input) {
             return input;
         }
-    };
-
-    public List<InternalAggregation> aggregations = Collections.emptyList();
+    };    
 
     private Map<String, InternalAggregation> aggregationsAsMap;
 

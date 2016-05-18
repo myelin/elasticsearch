@@ -18,6 +18,8 @@
  */
 package org.elasticsearch.search.aggregations.bucket.significant;
 
+import org.elasticsearch.search.aggregations.InternalAggregation;
+
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -36,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.search.aggregations.InternalAggregation;
 
 /**
  *
@@ -79,7 +80,7 @@ public class SignificantLongTerms extends InternalSignificantTerms<SignificantLo
         AggregationStreams.registerStream(STREAM, TYPE.stream());
         BucketStreams.registerStream(BUCKET_STREAM, TYPE.stream());
     }
-
+    
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -166,7 +167,7 @@ public class SignificantLongTerms extends InternalSignificantTerms<SignificantLo
             builder.endObject();
             return builder;
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

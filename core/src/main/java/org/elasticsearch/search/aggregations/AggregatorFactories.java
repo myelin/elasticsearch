@@ -77,7 +77,7 @@ public class AggregatorFactories {
         }
         return aggregators;
     }
-
+    
     public PipelineAggregator[] createSubPipelineAggregators(Aggregator parent) throws IOException {
         PipelineAggregator[] pipelineAggregators = new PipelineAggregator[count()];
         
@@ -88,7 +88,7 @@ public class AggregatorFactories {
         
         return pipelineAggregators;
     }
-    
+
     public Aggregator[] createTopLevelAggregators(AggregationContext ctx) throws IOException {
         // These aggregators are going to be used with a single bucket ordinal, no need to wrap the PER_BUCKET ones
         Aggregator[] aggregators = new Aggregator[factories.length];

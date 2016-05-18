@@ -80,7 +80,7 @@ public class SignificantStringTerms extends InternalSignificantTerms<Significant
     public static void registerStreams() {
         AggregationStreams.registerStream(STREAM, TYPE.stream());
     }
-
+    
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -160,7 +160,7 @@ public class SignificantStringTerms extends InternalSignificantTerms<Significant
             builder.endObject();
             return builder;
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

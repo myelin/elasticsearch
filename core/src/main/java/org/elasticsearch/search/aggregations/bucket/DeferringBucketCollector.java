@@ -27,9 +27,8 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 
 /**
  * A {@link BucketCollector} that records collected doc IDs and buckets and

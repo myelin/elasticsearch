@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.elasticsearch.search.aggregations.InternalAggregation;
-
 /**
  * A global scope get (the document set on which we aggregate is all documents in the search context (ie. index + type)
  * regardless the query.
@@ -65,7 +64,7 @@ public class InternalGlobal extends InternalSingleBucketAggregation implements G
     protected InternalSingleBucketAggregation newAggregation(String name, long docCount, InternalAggregations subAggregations) {
         return new InternalGlobal(name, docCount, subAggregations, pipelineAggregators(), getMetaData());
     }
-
+    
     @Override
     public List<PipelineAggregator> getPipeplineAggregation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

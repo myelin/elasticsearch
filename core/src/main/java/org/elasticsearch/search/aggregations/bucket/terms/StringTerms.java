@@ -146,7 +146,7 @@ public class StringTerms extends InternalTerms<StringTerms, StringTerms.Bucket> 
             builder.endObject();
             return builder;
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             return this.pipelineAggregations;            

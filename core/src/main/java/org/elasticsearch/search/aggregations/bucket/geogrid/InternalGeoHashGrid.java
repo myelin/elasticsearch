@@ -86,7 +86,6 @@ public class InternalGeoHashGrid extends InternalMultiBucketAggregation<Internal
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
     static class Bucket extends InternalMultiBucketAggregation.InternalBucket implements GeoHashGrid.Bucket, Comparable<Bucket> {
 
         protected long geohashAsLong;
@@ -168,7 +167,7 @@ public class InternalGeoHashGrid extends InternalMultiBucketAggregation<Internal
             builder.endObject();
             return builder;
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

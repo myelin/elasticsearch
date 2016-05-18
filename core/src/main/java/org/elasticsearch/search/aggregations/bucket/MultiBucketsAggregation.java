@@ -62,7 +62,7 @@ public interface MultiBucketsAggregation extends Aggregation {
          */
         @Override
         Aggregations getAggregations();
-        
+
         @Override
         List<PipelineAggregator> getPipeplineAggregation();
 

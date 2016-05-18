@@ -64,7 +64,7 @@ public class InternalFilter extends InternalSingleBucketAggregation implements F
     protected InternalSingleBucketAggregation newAggregation(String name, long docCount, InternalAggregations subAggregations) {
         return new InternalFilter(name, docCount, subAggregations, pipelineAggregators(), getMetaData());
     }
-
+    
     @Override
     public List<PipelineAggregator> getPipeplineAggregation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

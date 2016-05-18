@@ -139,5 +139,4 @@ public final class InternalCardinality extends InternalNumericMetricsAggregation
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

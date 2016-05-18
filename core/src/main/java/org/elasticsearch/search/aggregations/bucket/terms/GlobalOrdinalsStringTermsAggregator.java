@@ -257,7 +257,7 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             throw new UnsupportedOperationException();
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -66,7 +66,7 @@ public class InternalReverseNested extends InternalSingleBucketAggregation imple
     protected InternalSingleBucketAggregation newAggregation(String name, long docCount, InternalAggregations subAggregations) {
         return new InternalReverseNested(name, docCount, subAggregations, pipelineAggregators(), getMetaData());
     }
-
+    
     @Override
     public List<PipelineAggregator> getPipeplineAggregation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

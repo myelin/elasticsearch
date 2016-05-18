@@ -112,7 +112,7 @@ public class InternalValueCount extends InternalNumericMetricsAggregation.Single
     public String toString() {
         return "count[" + value + "]";
     }
-
+    
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -66,7 +66,7 @@ public class InternalSampler extends InternalSingleBucketAggregation implements 
             InternalAggregations subAggregations) {
         return new InternalSampler(name, docCount, subAggregations, pipelineAggregators(), metaData);
     }
-
+    
     @Override
     public List<PipelineAggregator> getPipeplineAggregation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

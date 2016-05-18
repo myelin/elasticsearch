@@ -19,11 +19,11 @@
 
 package org.elasticsearch.search.aggregations.bucket;
 
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import java.util.List;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.HasAggregations;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 
 /**
  * A single bucket aggregation

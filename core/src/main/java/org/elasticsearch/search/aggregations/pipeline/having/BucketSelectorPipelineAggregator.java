@@ -44,9 +44,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.search.aggregations.Aggregations;
 
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
+import org.elasticsearch.search.aggregations.Aggregations;
 
 public class BucketSelectorPipelineAggregator extends PipelineAggregator {
 
@@ -143,12 +143,12 @@ public class BucketSelectorPipelineAggregator extends PipelineAggregator {
         gapPolicy = GapPolicy.readFrom(in);
         bucketsPathsMap = (Map<String, String>) in.readGenericValue();
     }
-
+    /*
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    */
 
     public static class Factory extends PipelineAggregatorFactory {
 

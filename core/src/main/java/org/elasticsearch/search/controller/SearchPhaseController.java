@@ -58,21 +58,18 @@ import org.elasticsearch.search.query.QuerySearchResultProvider;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.profile.ProfileShardResult;
 
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import java.util.Iterator;
 import org.elasticsearch.search.aggregations.Aggregation;
 
 /**
@@ -415,10 +412,8 @@ public class SearchPhaseController extends AbstractComponent {
                 for (AtomicArray.Entry<? extends QuerySearchResultProvider> entry : queryResults) {
                     aggregationsList.add((InternalAggregations) entry.value.queryResult().aggregations());
                 }
-                aggregations = InternalAggregations.reduce(aggregationsList, new ReduceContext(bigArrays, scriptService, headersContext));                
+                aggregations = InternalAggregations.reduce(aggregationsList, new ReduceContext(bigArrays, scriptService, headersContext));
             }
-            
-            
         }
 
         //Collect profile results
@@ -445,25 +440,30 @@ public class SearchPhaseController extends AbstractComponent {
             }
             
             /****** Modified Code *****/
-            if (aggregations.aggregations.get(0).pipelineAggregators() != null) {
-                List<PipelineAggregator> pipelineAggregators1 = aggregations.aggregations.get(0).pipelineAggregators() ;
-                
-                List<InternalAggregation> newAggs = new ArrayList<InternalAggregation>();
-                for (PipelineAggregator pipelineAggregator : pipelineAggregators1) {
-                    InternalAggregation newAgg = pipelineAggregator.sortOrder(aggregations.aggregations.get(0), new ReduceContext(
-                            bigArrays, scriptService, headersContext));
-                    newAggs.add(newAgg);
+            try {
+                if (aggregations.aggregations.get(0).pipelineAggregators() != null) {
+                    List<PipelineAggregator> pipelineAggregators1 = aggregations.aggregations.get(0).pipelineAggregators() ;
+                    int i = 0;
+                    List<InternalAggregation> newAggs = new ArrayList<InternalAggregation>();
+                    for (PipelineAggregator pipelineAggregator : pipelineAggregators1) {                
+                        if (i == 0 ) {
+                            InternalAggregation newAgg = pipelineAggregator.sortOrder(aggregations.aggregations.get(0), new ReduceContext(
+                                bigArrays, scriptService, headersContext));
+                            newAggs.add(newAgg);
+                            i++;
+                        }
+                    }
+
+                    aggregations  = new InternalAggregations(newAggs);
                 }
+            } catch (Exception e) {
                 
-                aggregations = new InternalAggregations(newAggs);
             }
-        }        
-        
+        }
+
         InternalSearchHits searchHits = new InternalSearchHits(hits.toArray(new InternalSearchHit[hits.size()]), totalHits, maxScore);
 
         return new InternalSearchResponse(searchHits, aggregations, suggest, shardResults, timedOut, terminatedEarly);
     }
 
-    
-    //public abstract InternalAggregation doReduce(Aggregations aggregations, ReduceContext context);
 }

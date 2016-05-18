@@ -92,13 +92,14 @@ public class InternalTDigestPercentiles extends AbstractInternalTDigestPercentil
     public Type type() {
         return TYPE;
     }
-
+    
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public static class Iter extends UnmodifiableIterator<Percentile> {
+
         private final double[] percents;
         private final TDigestState state;
         private int i;

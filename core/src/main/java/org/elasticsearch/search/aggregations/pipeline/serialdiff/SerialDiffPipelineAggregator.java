@@ -39,13 +39,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import org.elasticsearch.search.aggregations.Aggregations;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
+import org.elasticsearch.search.aggregations.Aggregations;
 
 public class SerialDiffPipelineAggregator extends PipelineAggregator {
 
@@ -144,13 +142,12 @@ public class SerialDiffPipelineAggregator extends PipelineAggregator {
         gapPolicy.writeTo(out);
         out.writeVInt(lag);
     }
-
+    /*
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }*/
 
-    
     public static class Factory extends PipelineAggregatorFactory {
 
         private final ValueFormatter formatter;

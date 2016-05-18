@@ -112,5 +112,4 @@ public class InternalSum extends InternalNumericMetricsAggregation.SingleValue i
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

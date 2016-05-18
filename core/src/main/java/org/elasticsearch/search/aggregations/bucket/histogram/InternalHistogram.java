@@ -88,7 +88,7 @@ public class InternalHistogram<B extends InternalHistogram.Bucket> extends Inter
         AggregationStreams.registerStream(STREAM, TYPE.stream());
         BucketStreams.registerStream(BUCKET_STREAM, TYPE.stream());
     }
-
+    
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -197,7 +197,7 @@ public class InternalHistogram<B extends InternalHistogram.Bucket> extends Inter
         public boolean getKeyed() {
             return keyed;
         }
-
+        
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -20,17 +20,20 @@
 package org.elasticsearch.search.aggregations.support;
 
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.search.aggregations.*;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationExecutionException;
+import org.elasticsearch.search.aggregations.Aggregator;
+import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregation;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregator;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorFactory;
-import org.elasticsearch.search.aggregations.pipeline.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorFactory;
+import org.elasticsearch.search.aggregations.pipeline.*;
 
 /**
  * A path that can be used to sort/order buckets (in some multi-bucket aggregations, eg terms &amp; histogram) based on
@@ -80,19 +83,19 @@ public class AggregationPath {
                     if (element.charAt(element.length() - 1) != ']') {
                         throw new AggregationExecutionException("Invalid path element [" + element + "] in path [" + path + "]");
                     }
-                    tokens.add(new PathElement(element, element.substring(0, index), element.substring(index + 1, element.length() - 1), null));
+                    tokens.add(new PathElement(element, element.substring(0, index), element.substring(index + 1, element.length() - 1)));
                     continue;
                 }
                 index = element.lastIndexOf('.');
                 if (index < 0) {
-                    tokens.add(new PathElement(element, element, null, null));
+                    tokens.add(new PathElement(element, element, null));
                     continue;
                 }
                 if (index == 0 || index > element.length() - 2) {
                     throw new AggregationExecutionException("Invalid path element [" + element + "] in path [" + path + "]");
                 }
                 tuple = split(element, index, tuple);
-                tokens.add(new PathElement(element, tuple[0], tuple[1], null));
+                tokens.add(new PathElement(element, tuple[0], tuple[1]));
 
             } else {
                 int index = element.lastIndexOf('[');
@@ -103,10 +106,10 @@ public class AggregationPath {
                     if (element.charAt(element.length() - 1) != ']') {
                         throw new AggregationExecutionException("Invalid path element [" + element + "] in path [" + path + "]");
                     }
-                    tokens.add(new PathElement(element, element.substring(0, index), element.substring(index + 1, element.length() - 1), null));
+                    tokens.add(new PathElement(element, element.substring(0, index), element.substring(index + 1, element.length() - 1)));
                     continue;
                 }
-                tokens.add(new PathElement(element, element, null, null));
+                tokens.add(new PathElement(element, element, null));
             }
         }
         return new AggregationPath(tokens);
@@ -117,13 +120,11 @@ public class AggregationPath {
         private final String fullName;
         public final String name;
         public final String key;
-        public final String type; 
 
-        public PathElement(String fullName, String name, String key, String type) {
+        public PathElement(String fullName, String name, String key) {
             this.fullName = fullName;
             this.name = name;
             this.key = key;
-            this.type = type;
         }
 
         @Override
@@ -198,20 +199,19 @@ public class AggregationPath {
      */
     public double resolveValue(HasAggregations root) {
         HasAggregations parent = root;
-        double value = Double.NaN;             
-        
+        double value = Double.NaN;
         List<PipelineAggregator> pipeAgg = root.getPipeplineAggregation();
         for (int i = 0; i < pathElements.size(); i++) {
             AggregationPath.PathElement token = pathElements.get(i);
             Aggregation agg = parent.getAggregations().get(token.name);
-            
+
             if (agg == null) {
                 if (pipeAgg == null) {
-                    throw new IllegalArgumentException("Invalid order path [" + this +
+                throw new IllegalArgumentException("Invalid order path [" + this +
                         "]. Cannot find aggregation named [" + token.name + "]");
                 }
             }
-            
+
             if (agg instanceof SingleBucketAggregation) {
                 if (token.key != null && !token.key.equals("doc_count")) {
                     throw new IllegalArgumentException("Invalid order path [" + this +
@@ -243,38 +243,12 @@ public class AggregationPath {
             // we're left with a multi-value metric agg
             if (token.key == null) {
                 if (pipeAgg == null) {
-                    throw new IllegalArgumentException("Invalid order path [" + this +
+                throw new IllegalArgumentException("Invalid order path [" + this +
                         "]. Missing value key in [" + token + "] which refers to a multi-value metric aggregation");
                 }
             }
             parent = null;
-            if(agg instanceof InternalNumericMetricsAggregation.MultiValue) {
-                // For NumericMetricsAggregation we use the method value returning a native double
-                // Optimization to avoid object creation and multiple casts.
-                value = ((InternalNumericMetricsAggregation.MultiValue) agg).value(token.key);
-            } else if(agg instanceof InternalAggregation) {
-                // For a general use case, we use the method getProperty returning an Object
-                Object propertyValue = agg.getProperty(token.key);
-                // Only aggregation returning a numeric value are supported.
-                if(propertyValue instanceof Number) {
-                    value = ((Number) propertyValue).doubleValue();
-                } else {
-                    throw new AggregationExecutionException("Invalid order path ["+this+
-                            "]. Only numeric result are supported.");
-                }
-            } else {
-                int pipeAggOrder = 0;
-                for (int j=0; j < pipeAgg.size(); j++) {
-                    if ( token.name == pipeAgg.get(j).name()) {
-                        pipeAggOrder=1;
-                    }
-                }
-                
-                if (pipeAggOrder == 0) {
-                    throw new AggregationExecutionException("Invalid aggregation type for order path ["+this+
-                        "]. Only numeric & scripted metric aggregation are supported.");
-                }
-            }
+            value = ((InternalNumericMetricsAggregation.MultiValue) agg).value(token.key);
         }
 
         return value;
@@ -297,7 +271,7 @@ public class AggregationPath {
         }
         return aggregator;
     }
-    
+
     public PipelineAggregator resolvePipelineAggregator(Aggregator root) {
         Aggregator aggregator = root;
         PipelineAggregator pipelineAggregator = null;
@@ -308,7 +282,8 @@ public class AggregationPath {
         }
         return pipelineAggregator;
     }
-
+    
+    
     /**
      * Resolves the topmost aggregator pointed by this path using the given root as a point of reference.
      *
@@ -319,9 +294,8 @@ public class AggregationPath {
         AggregationPath.PathElement token = pathElements.get(0);
         Aggregator aggregator = root.subAggregator(token.name);
         PipelineAggregator pipelineAggregator = root.subPipelineAggregator(token.name);
-       
         assert (aggregator instanceof SingleBucketAggregator )
-                || (aggregator instanceof NumericMetricsAggregator) || (pipelineAggregator instanceof PipelineAggregator) : "this should be picked up before aggregation execution - on validate";
+                || (aggregator instanceof NumericMetricsAggregator) : "this should be picked up before aggregation execution - on validate";
         return aggregator;
     }
 
@@ -330,16 +304,16 @@ public class AggregationPath {
      *
      * @param root  The point of reference of this path
      */
-    public void validate(Aggregator root) {        
-        PipelineAggregator pipelineAggregator = null; 
+    public void validate(Aggregator root) {
         Aggregator aggregator = root;
+        PipelineAggregator pipelineAggregator = null; 
         for (int i = 0; i < pathElements.size(); i++) {
             aggregator = aggregator.subAggregator(pathElements.get(i).name);
             pipelineAggregator = root.subPipelineAggregator(pathElements.get(0).name);       
             if (aggregator == null) {
                 if (pipelineAggregator == null) {
-                    throw new AggregationExecutionException("Invalid term-aggregator order path [" + this + "]. Unknown aggregation ["
-                            + pathElements.get(i).name + "]");
+                throw new AggregationExecutionException("Invalid term-aggregator order path [" + this + "]. Unknown aggregation ["
+                        + pathElements.get(i).name + "]");
                 }
             }
             if (i < pathElements.size() - 1) {
@@ -390,7 +364,7 @@ public class AggregationPath {
             }
             return;   // perfectly valid to sort on single metric aggregation (will be sorted on its associated value)
         }
-
+        
         if (pipelineAggregator instanceof PipelineAggregator) {
             return;
         }
@@ -405,8 +379,6 @@ public class AggregationPath {
             throw new AggregationExecutionException("Invalid terms aggregation order path [" + this +
                     "]. Unknown metric name [" + lastToken.key + "] on multi-value metrics aggregation [" + lastToken.name + "]");
         }
-        
-       return;
     }
 
     private static String[] split(String toSplit, int index, String[] result) {

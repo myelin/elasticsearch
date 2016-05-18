@@ -68,7 +68,7 @@ public abstract class AggregatorBase extends Aggregator {
         this.parent = parent;
         this.context = context;
         assert factories != null : "sub-factories provided to BucketAggregator must not be null, use AggragatorFactories.EMPTY instead";
-        this.subAggregators = factories.createSubAggregators(this);   
+        this.subAggregators = factories.createSubAggregators(this);
         this.subpipelineAggregator = factories.createSubPipelineAggregators(this);
         
         context.searchContext().addReleasable(this, Lifetime.PHASE);
@@ -216,11 +216,11 @@ public abstract class AggregatorBase extends Aggregator {
     public Aggregator[] subAggregators() {
         return subAggregators;
     }
-
+    
     public PipelineAggregator[] subPipelineAggregator() {
         return subpipelineAggregator;
     }
-    
+
     @Override
     public PipelineAggregator subPipelineAggregator(String aggName) {
         if (subPipelineAggregatorbyName == null) {
