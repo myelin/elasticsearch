@@ -441,7 +441,7 @@ public class SearchPhaseController extends AbstractComponent {
             
             /****** Modified Code *****/
             try {
-                if (aggregations.aggregations.get(0).pipelineAggregators() != null) {
+                if (aggregations.aggregations.get(0).pipelineAggregators() != null && aggregations.aggregations.get(0).pipelineAggregators().size() > 0) {
                     List<PipelineAggregator> pipelineAggregators1 = aggregations.aggregations.get(0).pipelineAggregators() ;
                     int i = 0;
                     List<InternalAggregation> newAggs = new ArrayList<InternalAggregation>();
