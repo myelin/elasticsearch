@@ -21,6 +21,8 @@ package org.elasticsearch.search.controller;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.ObjectObjectHashMap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.CollectionStatistics;
 import org.apache.lucene.search.FieldDoc;
@@ -67,10 +69,16 @@ import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
-import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
-import java.util.Iterator;
-import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -412,6 +420,7 @@ public class SearchPhaseController extends AbstractComponent {
                 for (AtomicArray.Entry<? extends QuerySearchResultProvider> entry : queryResults) {
                     aggregationsList.add((InternalAggregations) entry.value.queryResult().aggregations());
                 }
+                                
                 aggregations = InternalAggregations.reduce(aggregationsList, new ReduceContext(bigArrays, scriptService, headersContext));
             }
         }
@@ -441,12 +450,13 @@ public class SearchPhaseController extends AbstractComponent {
             
             /****** Modified Code *****/
             try {
-                if (aggregations.aggregations.get(0).pipelineAggregators() != null && aggregations.aggregations.get(0).pipelineAggregators().size() > 0) {
+                if (aggregations.aggregations.get(0).pipelineAggregators() != null
+                        && aggregations.aggregations.get(0).pipelineAggregators().size() > 0) {
                     List<PipelineAggregator> pipelineAggregators1 = aggregations.aggregations.get(0).pipelineAggregators() ;
                     int i = 0;
                     List<InternalAggregation> newAggs = new ArrayList<InternalAggregation>();
                     for (PipelineAggregator pipelineAggregator : pipelineAggregators1) {                
-                        if (i == 0 ) {
+                        if (i == 0 ) {                            
                             InternalAggregation newAgg = pipelineAggregator.sortOrder(aggregations.aggregations.get(0), new ReduceContext(
                                 bigArrays, scriptService, headersContext));
                             newAggs.add(newAgg);
@@ -465,5 +475,5 @@ public class SearchPhaseController extends AbstractComponent {
 
         return new InternalSearchResponse(searchHits, aggregations, suggest, shardResults, timedOut, terminatedEarly);
     }
-
+        
 }

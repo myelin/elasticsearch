@@ -151,6 +151,11 @@ public class StringTerms extends InternalTerms<StringTerms, StringTerms.Bucket> 
         public List<PipelineAggregator> getPipeplineAggregation() {
             return this.pipelineAggregations;            
         }
+
+        @Override
+        public long getMainDocCount() {
+            return this.docCount;            
+        }
     }
 
     StringTerms() {

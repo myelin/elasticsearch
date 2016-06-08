@@ -43,4 +43,5 @@ public interface Aggregation {
      * Get the optional byte array metadata that was set on the aggregation
      */
     Map<String, Object> getMetaData();
+        
 }

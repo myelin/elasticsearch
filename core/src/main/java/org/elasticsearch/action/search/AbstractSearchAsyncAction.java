@@ -203,7 +203,7 @@ abstract class AbstractSearchAsyncAction<FirstResult extends SearchPhaseResult> 
                     logger.debug("All shards failed for phase: [{}]", t, firstPhaseName());
                 }
                 // no successful ops, raise an exception
-                raiseEarlyFailure(new SearchPhaseExecutionException(firstPhaseName(), "all shards failed", buildShardFailures()));
+                raiseEarlyFailure(new SearchPhaseExecutionException(firstPhaseName(), "all shards failed -- AbstractSearchAsyncAction", buildShardFailures()));
             } else {
                 try {
                     innerMoveToSecondPhase();

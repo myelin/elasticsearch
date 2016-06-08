@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.search.aggregations.pipeline.SiblingPipelineAggregator;
 
 /**
  * An internal implementation of {@link Aggregation}. Serves as a base class for all aggregation implementations.
@@ -159,9 +158,8 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
     }
 
     public abstract InternalAggregation doReduce(List<InternalAggregation> aggregations, ReduceContext reduceContext);
-
     public abstract InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext);
-
+    
     @Override
     public Object getProperty(String path) {
         AggregationPath aggPath = AggregationPath.parse(path);

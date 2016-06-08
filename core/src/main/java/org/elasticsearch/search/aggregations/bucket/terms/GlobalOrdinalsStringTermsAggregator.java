@@ -53,6 +53,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.common.logging.Loggers;
+import org.elasticsearch.common.logging.ESLogger;
+
 /**
  * An aggregator of string values that relies on global ordinals in order to build buckets.
  */
@@ -149,13 +152,23 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
             return buildEmptyAggregation();
         }
 
-        final int size;
+        int size;
         if (bucketCountThresholds.getMinDocCount() == 0) {
             // if minDocCount == 0 then we can end up with more buckets then maxBucketOrd() returns
             size = (int) Math.min(globalOrds.getValueCount(), bucketCountThresholds.getShardSize());
         } else {
             size = (int) Math.min(maxBucketOrd(), bucketCountThresholds.getShardSize());
         }
+        
+        /**** START OF REMOVE CODE ****/
+        if (this.pipelineAggregators().size() > 0) {
+            size = (int) Math.max(maxBucketOrd(), bucketCountThresholds.getShardSize());
+            final ESLogger logger = Loggers.getLogger(GlobalOrdinalsStringTermsAggregator.class);
+            logger.info("Number of records:: " + size);
+        }
+        
+        /**** END OF REMOVE CODE ****/
+        
         long otherDocCount = 0;
         BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(this));
         OrdBucket spare = new OrdBucket(-1, 0, null, showTermDocCountError, 0);
@@ -257,9 +270,14 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public long getMainDocCount() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }

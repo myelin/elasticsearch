@@ -369,7 +369,7 @@ public class SearchService extends AbstractLifecycleComponent<SearchService> {
 
     public QuerySearchResultProvider executeQueryPhase(ShardSearchRequest request) {
         final SearchContext context = createAndPutContext(request);
-        final ShardSearchStats shardSearchStats = context.indexShard().searchService();
+         final ShardSearchStats shardSearchStats = context.indexShard().searchService();
         try {
             shardSearchStats.onPreQueryPhase(context);
             long time = System.nanoTime();

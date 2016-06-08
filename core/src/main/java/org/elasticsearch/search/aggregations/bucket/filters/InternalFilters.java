@@ -79,7 +79,7 @@ public class InternalFilters extends InternalMultiBucketAggregation<InternalFilt
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     public static class Bucket extends InternalBucket implements Filters.Bucket {
 
         private final boolean keyed;
@@ -160,9 +160,14 @@ public class InternalFilters extends InternalMultiBucketAggregation<InternalFilt
             out.writeVLong(docCount);
             aggregations.writeTo(out);
         }
-        
+
         @Override
         public List<PipelineAggregator> getPipeplineAggregation() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public long getMainDocCount() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }

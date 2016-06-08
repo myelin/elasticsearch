@@ -52,12 +52,12 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
     public static void registerStreams() {
         AggregationStreams.registerStream(STREAM, TYPE.stream());
     }
-    
+
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     enum Metrics {
 
         count, sum, min, max, avg;

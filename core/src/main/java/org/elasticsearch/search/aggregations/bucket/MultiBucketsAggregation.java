@@ -63,10 +63,10 @@ public interface MultiBucketsAggregation extends Aggregation {
         @Override
         Aggregations getAggregations();
 
+        Object getProperty(String containingAggName, List<String> path);
+
         @Override
         List<PipelineAggregator> getPipeplineAggregation();
-
-        Object getProperty(String containingAggName, List<String> path);
 
         static class SubAggregationComparator<B extends Bucket> implements java.util.Comparator<B> {
 

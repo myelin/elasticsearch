@@ -83,7 +83,7 @@ public class AggregatorFactories {
         
         for (int i = 0; i < this.pipelineAggregatorFactories.size(); i++) {
             final boolean collectsFromSingleBucket = false;
-           // pipelineAggregators[i] = factories[i].create(parent.context(), parent, collectsFromSingleBucket);
+            //pipelineAggregators[i] = factories[i].create(parent.context(), parent, collectsFromSingleBucket);
         }
         
         return pipelineAggregators;

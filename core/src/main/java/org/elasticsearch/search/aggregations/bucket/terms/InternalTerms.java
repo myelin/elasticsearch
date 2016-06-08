@@ -40,8 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
-
 /**
  *
  */
@@ -61,7 +59,6 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         protected boolean showDocCountError;
         transient final ValueFormatter formatter;
         protected List<PipelineAggregator> pipelineAggregations;
-
 
         protected Bucket(ValueFormatter formatter, boolean showDocCountError) {
             // for serialization
@@ -89,11 +86,10 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
             }
             return docCountError;
         }
-
+        
         public List<PipelineAggregator> getPipelineAggregations() {
             return pipelineAggregations;
         }
-
 
         @Override
         public Aggregations getAggregations() {
@@ -174,7 +170,7 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
     public long getSumOfOtherDocCounts() {
         return otherDocCount;
     }
-
+    
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         
         InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket> originalAgg = (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregations;
@@ -215,6 +211,18 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
         long sumDocCountError = 0;
         long otherDocCount = 0;
         InternalTerms<A, B> referenceTerms = null;
+        
+        /********* REMOVE CODE *******
+        for (InternalAggregation aggregation : aggregations) {            
+            InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregation;
+            System.out.println("------------------------------------------------------------------- "); 
+            for (Bucket bucket : terms.buckets) {
+                System.out.println(bucket.getKey()); 
+            }
+        }
+        ******** REMOVE CODE ********/
+        
+        
         for (InternalAggregation aggregation : aggregations) {
             InternalTerms<A, B> terms = (InternalTerms<A, B>) aggregation;
             if (referenceTerms == null && !terms.getClass().equals(UnmappedTerms.class)) {
@@ -256,17 +264,20 @@ public abstract class InternalTerms<A extends InternalTerms, B extends InternalT
             }
         }
 
-        final int size = Math.min(requiredSize, buckets.size());
-        BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
-        
         List<PipelineAggregator> pipeAgg = this.pipelineAggregators();
-        int counter = 0;
+        int size = 0;
+        if (pipeAgg.size() > 0) {
+            size = Math.max(requiredSize, buckets.size());
+        }
+        else {
+            size = Math.min(requiredSize, buckets.size());
+        }
+        
+        BucketPriorityQueue ordered = new BucketPriorityQueue(size, order.comparator(null));
         for (Collection<Bucket> l : buckets.asMap().values()) {
             List<Bucket> sameTermBuckets = (List<Bucket>) l; // cast is ok according to javadocs
             final Bucket b = sameTermBuckets.get(0).reduce(sameTermBuckets, reduceContext);
-            counter++;
             b.pipelineAggregations = pipeAgg;
-
             if (b.docCountError != -1) {
                 if (sumDocCountError == -1) {
                     b.docCountError = -1;

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.elasticsearch.search.aggregations.InternalAggregation;
+
 /**
  * A global scope get (the document set on which we aggregate is all documents in the search context (ie. index + type)
  * regardless the query.
@@ -72,6 +73,11 @@ public class InternalGlobal extends InternalSingleBucketAggregation implements G
 
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long getMainDocCount() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

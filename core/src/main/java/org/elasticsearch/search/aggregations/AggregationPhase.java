@@ -164,7 +164,7 @@ public class AggregationPhase implements SearchPhase {
         for (Aggregator aggregator : context.aggregations().aggregators()) {
             try {
                 aggregator.postCollection();
-                aggregations.add(aggregator.buildAggregation(0));
+                aggregations.add(aggregator.buildAggregation(0));   
             } catch (IOException e) {
                 throw new AggregationExecutionException("Failed to build aggregation [" + aggregator.name() + "]", e);
             }

@@ -48,10 +48,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import org.elasticsearch.search.aggregations.Aggregations;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
-import org.elasticsearch.search.aggregations.Aggregations;
 
 public class MovAvgPipelineAggregator extends PipelineAggregator {
 
@@ -278,12 +278,12 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
         out.writeBoolean(minimize);
 
     }
-/*
+
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-*/
+
     public static class Factory extends PipelineAggregatorFactory {
 
         private final ValueFormatter formatter;

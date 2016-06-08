@@ -30,7 +30,6 @@ import org.elasticsearch.search.internal.SearchContext.Lifetime;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 
 /**
  * A factory that knows how to create an {@link Aggregator} of a specific type.

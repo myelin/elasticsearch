@@ -22,7 +22,6 @@ package org.elasticsearch.search.aggregations.pipeline.bucketmetrics.sum;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation;
-import org.elasticsearch.search.aggregations.InternalAggregation.ReduceContext;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import org.elasticsearch.search.aggregations.pipeline.InternalSimpleValue;
@@ -82,6 +81,11 @@ public class SumBucketPipelineAggregator extends BucketMetricsPipelineAggregator
     protected InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata) {
         return new InternalSimpleValue(name(), sum, formatter, pipelineAggregators, metadata);
     }
+    
+    @Override
+    public InternalAggregation sortOrder(InternalAggregation aggregation, InternalAggregation.ReduceContext reduceContext) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     public static class Factory extends PipelineAggregatorFactory {
 
@@ -109,10 +113,5 @@ public class SumBucketPipelineAggregator extends BucketMetricsPipelineAggregator
         }
 
     }
-    /*
-    @Override
-    public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
 
 }

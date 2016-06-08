@@ -106,13 +106,12 @@ public class InternalHDRPercentileRanks extends AbstractInternalHDRPercentiles i
         }
         return percentileRank;
     }
-    
+
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregations, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-
+    
     public static class Iter extends UnmodifiableIterator<Percentile> {
 
         private final double[] values;

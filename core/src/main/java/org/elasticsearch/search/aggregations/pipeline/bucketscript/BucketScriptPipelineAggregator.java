@@ -51,6 +51,7 @@ import java.util.Map;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
+
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -115,7 +116,6 @@ public class BucketScriptPipelineAggregator extends PipelineAggregator {
         
         return aggSorted;
     }
-        
 
     @Override
     public InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext) {

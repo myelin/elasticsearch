@@ -44,7 +44,6 @@ import java.util.Map;
 
 import static org.elasticsearch.common.util.CollectionUtils.eagerTransform;
 import static org.elasticsearch.search.aggregations.pipeline.BucketHelpers.resolveBucketValue;
-import org.elasticsearch.search.aggregations.Aggregations;
 
 public class DerivativePipelineAggregator extends PipelineAggregator {
 
@@ -150,12 +149,11 @@ public class DerivativePipelineAggregator extends PipelineAggregator {
             out.writeDouble(xAxisUnits);
         }
     }
-    /*
+
     @Override
     public InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-*/
 
     public static class Factory extends PipelineAggregatorFactory {
 

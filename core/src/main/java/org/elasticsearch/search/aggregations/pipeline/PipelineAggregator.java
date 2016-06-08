@@ -28,14 +28,11 @@ import org.elasticsearch.common.io.stream.Streamable;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation;
-import org.elasticsearch.search.aggregations.InternalMultiBucketAggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation.ReduceContext;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.elasticsearch.search.internal.SearchContext;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public abstract class PipelineAggregator implements Streamable {
@@ -110,6 +107,8 @@ public abstract class PipelineAggregator implements Streamable {
 
     public abstract Type type();
 
+    public abstract InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext);
+    
     public abstract InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext);
 
     @Override
@@ -131,16 +130,4 @@ public abstract class PipelineAggregator implements Streamable {
     }
 
     protected abstract void doReadFrom(StreamInput in) throws IOException;
-
-    public InternalAggregation sortOrder(InternalAggregation aggregation, ReduceContext reduceContext) {
-        InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket> originalAgg = (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregation;
-        List<? extends Bucket> buckets = originalAgg.getBuckets();
-
-        Bucket[] list = new Bucket[buckets.size()];
-        //Terms.Order order = null;        
-        
-        InternalAggregation aggSorted = aggregation.sortOrder(aggregation, reduceContext);
-        
-        return aggSorted;
-    }
 }

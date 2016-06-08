@@ -47,8 +47,8 @@ public abstract class AggregatorBase extends Aggregator {
     protected BucketCollector collectableSubAggregators;
 
     private Map<String, Aggregator> subAggregatorbyName;
-    private Map<String, PipelineAggregator> subPipelineAggregatorbyName;
     private DeferringBucketCollector recordingWrapper;
+    private Map<String, PipelineAggregator> subPipelineAggregatorbyName;
     private final List<PipelineAggregator> pipelineAggregators;
 
     /**
@@ -220,7 +220,7 @@ public abstract class AggregatorBase extends Aggregator {
     public PipelineAggregator[] subPipelineAggregator() {
         return subpipelineAggregator;
     }
-
+    
     @Override
     public PipelineAggregator subPipelineAggregator(String aggName) {
         if (subPipelineAggregatorbyName == null) {
@@ -232,7 +232,7 @@ public abstract class AggregatorBase extends Aggregator {
         }
         return subPipelineAggregatorbyName.get(aggName);
     }
-    
+
     @Override
     public Aggregator subAggregator(String aggName) {
         if (subAggregatorbyName == null) {
